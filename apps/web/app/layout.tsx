@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
+
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'startupShop',
@@ -9,7 +12,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ fontFamily: 'sans-serif', margin: '2rem' }}>{children}</body>
+      <body>
+        <div className="page">
+          <header className="topbar">
+            <Link href="/" className="brand">
+              startupShop
+            </Link>
+            <div className="meta">MVP marketplace for startup acquisitions</div>
+          </header>
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

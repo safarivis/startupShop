@@ -24,9 +24,9 @@
 
 ## M2 UI
 
-- [ ] Catalog page with search/filter/sort
-- [ ] Startup detail page
-- [ ] Offer submission page
+- [x] Catalog page with search/filter/sort
+- [x] Startup detail page
+- [x] Offer submission page
 
 ## M3 Offers
 
