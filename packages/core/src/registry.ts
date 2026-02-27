@@ -16,7 +16,20 @@ import type {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DEFAULT_REPO_ROOT = path.resolve(__dirname, '../../../');
+function detectRepoRoot(): string {
+  const candidates = [
+    process.env.STARTUPSHOP_REPO_ROOT,
+    process.cwd(),
+    path.resolve(process.cwd(), '..'),
+    path.resolve(process.cwd(), '../..'),
+    path.resolve(__dirname, '../../../')
+  ].filter(Boolean) as string[];
+
+  const match = candidates.find((candidate) => fs.existsSync(path.join(candidate, 'index.yaml')));
+  return match ?? path.resolve(__dirname, '../../../');
+}
+
+const DEFAULT_REPO_ROOT = detectRepoRoot();
 
 function loadYamlFile<T>(filePath: string): T {
   const raw = fs.readFileSync(filePath, 'utf8');
@@ -49,9 +62,8 @@ export function loadAndValidateListings(repoRoot = DEFAULT_REPO_ROOT): ListingsL
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
   const indexDoc = loadYamlFile<{ listings: ListingIndexEntry[] }>(indexPath);
 
-  // Remove $schema to avoid AJV trying to resolve external meta-schema
   delete (schema as Record<string, unknown>)['$schema'];
-  
+
   const ajv = new Ajv({ allErrors: true, strict: true });
   addFormats(ajv);
   const validate = ajv.compile<StartupListing>(schema);

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.1.0
+  version: 0.2.0
   description: Agent-navigable API for startup listings and offer submissions.
 servers:
   - url: http://localhost:3000
@@ -9,12 +9,13 @@ paths:
   /api/startups:
     get:
       summary: List startups
-      description: Returns startup listings with optional filtering and sorting.
+      description: Returns startup listings with computed score and optional filtering/sorting.
       parameters:
         - name: category
           in: query
           schema:
             type: string
+          description: Exact category match filter (case-insensitive)
         - name: stage
           in: query
           schema:
@@ -25,9 +26,21 @@ paths:
           schema:
             type: string
             enum: [score, mrr]
+            default: score
       responses:
         '200':
           description: Startup list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Startup'
+        '400':
+          description: Invalid query parameter
   /api/startups/{id}:
     get:
       summary: Get startup by id
@@ -40,6 +53,13 @@ paths:
       responses:
         '200':
           description: Startup detail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Startup'
         '404':
           description: Startup not found
   /api/startups/{id}/validation:
@@ -53,7 +73,14 @@ paths:
             type: string
       responses:
         '200':
-          description: Validation status
+          description: Validation status for startup
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ValidationResult'
         '404':
           description: Startup not found
   /api/offers:
@@ -72,6 +99,92 @@ paths:
           description: Invalid payload
 components:
   schemas:
+    Startup:
+      type: object
+      required:
+        [startup_id, identity, status, traction, mvp, tech, ops, deal, risks, metadata, score]
+      properties:
+        startup_id:
+          type: string
+        identity:
+          type: object
+          properties:
+            name: { type: string }
+            category: { type: string }
+            summary: { type: string }
+            website: { type: string, format: uri }
+        status:
+          type: object
+          properties:
+            stage:
+              type: string
+              enum: [idea, mvp, early-revenue, growth, mature]
+            listed: { type: boolean }
+        traction:
+          type: object
+          properties:
+            mrr_usd: { type: number }
+            users: { type: integer }
+            growth_mom_percent: { type: number }
+        mvp:
+          type: object
+          properties:
+            live: { type: boolean }
+            notes: { type: string }
+        tech:
+          type: object
+          properties:
+            stack:
+              type: array
+              items: { type: string }
+            risk_level:
+              type: string
+              enum: [low, medium, high]
+        ops:
+          type: object
+          properties:
+            automation_level:
+              type: string
+              enum: [manual, semi-automated, automated]
+            owner_handoff_ready: { type: boolean }
+        deal:
+          type: object
+          properties:
+            ask_usd: { type: number }
+            terms: { type: string }
+        risks:
+          type: array
+          items: { type: string }
+        metadata:
+          type: object
+          properties:
+            created_at: { type: string, format: date }
+            updated_at: { type: string, format: date }
+        metrics_url:
+          type: string
+          format: uri
+        score:
+          $ref: '#/components/schemas/ScoreBreakdown'
+    ScoreBreakdown:
+      type: object
+      required: [stage_score, traction_score, ops_readiness_score, tech_risk_score, unit_economics_score, total_score]
+      properties:
+        stage_score: { type: number }
+        traction_score: { type: number }
+        ops_readiness_score: { type: number }
+        tech_risk_score: { type: number }
+        unit_economics_score: { type: number }
+        total_score: { type: number }
+    ValidationResult:
+      type: object
+      required: [startup_id, path, valid, errors]
+      properties:
+        startup_id: { type: string }
+        path: { type: string }
+        valid: { type: boolean }
+        errors:
+          type: array
+          items: { type: string }
     OfferRequest:
       type: object
       required: [startup_id, buyer_name, buyer_email, offer_amount_usd, message]

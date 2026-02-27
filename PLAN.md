@@ -16,11 +16,11 @@
 
 ## M1 API + Scoring
 
-- [ ] Add scoring model in `packages/core`
-- [ ] `GET /api/startups`
-- [ ] `GET /api/startups/:id`
-- [ ] `GET /api/startups/:id/validation`
-- [ ] Update `agents/openapi.yaml`
+- [x] Add scoring model in `packages/core`
+- [x] `GET /api/startups`
+- [x] `GET /api/startups/:id`
+- [x] `GET /api/startups/:id/validation`
+- [x] Update `agents/openapi.yaml`
 
 ## M2 UI
 
