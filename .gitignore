@@ -8,3 +8,5 @@ coverage
 !.env.example
 *.tsbuildinfo
 pnpm-lock.yaml
+AI_Agent_Marketplace_Operator_Model.md
+CLAUDE.md
