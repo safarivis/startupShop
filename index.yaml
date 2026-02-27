@@ -1,0 +1,7 @@
+listings:
+  - startup_id: pixelpilot-ai
+    path: listings/pixelpilot-ai.yaml
+  - startup_id: shelfsense
+    path: listings/shelfsense.yaml
+  - startup_id: legalleaf
+    path: listings/legalleaf.yaml

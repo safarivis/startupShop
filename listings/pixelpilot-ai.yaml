@@ -1,0 +1,36 @@
+startup_id: pixelpilot-ai
+identity:
+  name: PixelPilot AI
+  category: AI Design Tools
+  summary: AI copilot that generates and iterates social ad creatives from brand inputs.
+  website: https://example.com/pixelpilot-ai
+status:
+  stage: early-revenue
+  listed: true
+traction:
+  mrr_usd: 7400
+  users: 138
+  growth_mom_percent: 16
+mvp:
+  live: true
+  notes: Stable self-serve product with Stripe billing and onboarding wizard.
+tech:
+  stack:
+    - Next.js
+    - TypeScript
+    - Postgres
+    - OpenAI API
+  risk_level: medium
+ops:
+  automation_level: semi-automated
+  owner_handoff_ready: true
+deal:
+  ask_usd: 260000
+  terms: Asset sale; includes codebase, domain, and customer contracts.
+risks:
+  - Heavy dependence on paid ad channel trends.
+  - Prompt quality needs continuous maintenance.
+metadata:
+  created_at: 2026-02-01
+  updated_at: 2026-02-24
+metrics_url: https://example.com/pixelpilot-ai/metrics

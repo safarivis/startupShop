@@ -1,0 +1,89 @@
+openapi: 3.1.0
+info:
+  title: startupShop Agent API
+  version: 0.1.0
+  description: Agent-navigable API for startup listings and offer submissions.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/startups:
+    get:
+      summary: List startups
+      description: Returns startup listings with optional filtering and sorting.
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: stage
+          in: query
+          schema:
+            type: string
+            enum: [idea, mvp, early-revenue, growth, mature]
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [score, mrr]
+      responses:
+        '200':
+          description: Startup list
+  /api/startups/{id}:
+    get:
+      summary: Get startup by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Startup detail
+        '404':
+          description: Startup not found
+  /api/startups/{id}/validation:
+    get:
+      summary: Get startup validation status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Validation status
+        '404':
+          description: Startup not found
+  /api/offers:
+    post:
+      summary: Submit offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferRequest'
+      responses:
+        '201':
+          description: Offer accepted
+        '400':
+          description: Invalid payload
+components:
+  schemas:
+    OfferRequest:
+      type: object
+      required: [startup_id, buyer_name, buyer_email, offer_amount_usd, message]
+      properties:
+        startup_id:
+          type: string
+        buyer_name:
+          type: string
+        buyer_email:
+          type: string
+          format: email
+        offer_amount_usd:
+          type: number
+        message:
+          type: string

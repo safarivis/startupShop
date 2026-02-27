@@ -1,0 +1,36 @@
+startup_id: legalleaf
+identity:
+  name: LegalLeaf
+  category: Legal Ops SaaS
+  summary: Contract clause library and approval workflow for small agencies.
+  website: https://example.com/legalleaf
+status:
+  stage: growth
+  listed: true
+traction:
+  mrr_usd: 15400
+  users: 312
+  growth_mom_percent: 12
+mvp:
+  live: true
+  notes: Mature v2 product with SSO, audit logs, and integrations.
+tech:
+  stack:
+    - Node.js
+    - TypeScript
+    - Prisma
+    - Postgres
+  risk_level: low
+ops:
+  automation_level: automated
+  owner_handoff_ready: true
+deal:
+  ask_usd: 620000
+  terms: Stock purchase with optional earn-out tied to retention.
+risks:
+  - Competitive pressure from incumbent CLM tools.
+  - Enterprise sales cycles can lengthen unexpectedly.
+metadata:
+  created_at: 2025-12-05
+  updated_at: 2026-02-21
+metrics_url: https://example.com/legalleaf/metrics

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://startupshop.dev/schemas/startupshop.schema.json",
+  "title": "startupShopListing",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "startup_id",
+    "identity",
+    "status",
+    "traction",
+    "mvp",
+    "tech",
+    "ops",
+    "deal",
+    "risks",
+    "metadata"
+  ],
+  "properties": {
+    "startup_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "category", "summary", "website"],
+      "properties": {
+        "name": { "type": "string", "minLength": 2 },
+        "category": { "type": "string", "minLength": 2 },
+        "summary": { "type": "string", "minLength": 10 },
+        "website": { "type": "string", "format": "uri" }
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "listed"],
+      "properties": {
+        "stage": {
+          "type": "string",
+          "enum": ["idea", "mvp", "early-revenue", "growth", "mature"]
+        },
+        "listed": { "type": "boolean" }
+      }
+    },
+    "traction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mrr_usd", "users", "growth_mom_percent"],
+      "properties": {
+        "mrr_usd": { "type": "number", "minimum": 0 },
+        "users": { "type": "integer", "minimum": 0 },
+        "growth_mom_percent": { "type": "number" }
+      }
+    },
+    "mvp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["live", "notes"],
+      "properties": {
+        "live": { "type": "boolean" },
+        "notes": { "type": "string", "minLength": 3 }
+      }
+    },
+    "tech": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stack", "risk_level"],
+      "properties": {
+        "stack": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        }
+      }
+    },
+    "ops": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["automation_level", "owner_handoff_ready"],
+      "properties": {
+        "automation_level": {
+          "type": "string",
+          "enum": ["manual", "semi-automated", "automated"]
+        },
+        "owner_handoff_ready": { "type": "boolean" }
+      }
+    },
+    "deal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ask_usd", "terms"],
+      "properties": {
+        "ask_usd": { "type": "number", "minimum": 0 },
+        "terms": { "type": "string", "minLength": 2 }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created_at", "updated_at"],
+      "properties": {
+        "created_at": { "type": "string", "format": "date" },
+        "updated_at": { "type": "string", "format": "date" }
+      }
+    },
+    "metrics_url": {
+      "type": "string",
+      "format": "uri"
+    }
+  }
+}

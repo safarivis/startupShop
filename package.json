@@ -1,0 +1,12 @@
+{
+  "name": "startupshop",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.4.1",
+  "scripts": {
+    "dev": "pnpm --filter @startupshop/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "validate:listings": "pnpm --filter @startupshop/core validate:listings"
+  }
+}

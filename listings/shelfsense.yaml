@@ -1,0 +1,35 @@
+startup_id: shelfsense
+identity:
+  name: ShelfSense
+  category: Retail Analytics SaaS
+  summary: Demand forecasting dashboards for independent grocery stores.
+  website: https://example.com/shelfsense
+status:
+  stage: mvp
+  listed: true
+traction:
+  mrr_usd: 1800
+  users: 27
+  growth_mom_percent: 9
+mvp:
+  live: true
+  notes: Pilot deployments in 6 stores with nightly ETL sync from POS exports.
+tech:
+  stack:
+    - Python
+    - FastAPI
+    - SQLite
+    - React
+  risk_level: low
+ops:
+  automation_level: manual
+  owner_handoff_ready: false
+deal:
+  ask_usd: 95000
+  terms: Asset transfer with 30-day founder transition support.
+risks:
+  - Customer concentration in one metro area.
+  - Data ingestion relies on inconsistent CSV exports.
+metadata:
+  created_at: 2026-01-15
+  updated_at: 2026-02-20
