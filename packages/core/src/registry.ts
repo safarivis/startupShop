@@ -49,6 +49,9 @@ export function loadAndValidateListings(repoRoot = DEFAULT_REPO_ROOT): ListingsL
   const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
   const indexDoc = loadYamlFile<{ listings: ListingIndexEntry[] }>(indexPath);
 
+  // Remove $schema to avoid AJV trying to resolve external meta-schema
+  delete (schema as Record<string, unknown>)['$schema'];
+  
   const ajv = new Ajv({ allErrors: true, strict: true });
   addFormats(ajv);
   const validate = ajv.compile<StartupListing>(schema);
