@@ -1,2 +1,4 @@
-export * from './registry.js';
-export * from './types.js';
+export * from './query';
+export * from './registry';
+export * from './scoring';
+export * from './types';
