@@ -1,4 +1,4 @@
-import { loadAndValidateListings } from './registry.js';
+import { loadAndValidateListings } from './registry';
 
 const result = loadAndValidateListings();
 const invalid = result.validations.filter((entry) => !entry.valid);

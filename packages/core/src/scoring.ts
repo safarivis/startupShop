@@ -1,4 +1,4 @@
-import type { StartupListing, StartupStage } from './types.js';
+import type { StartupListing, StartupStage } from './types';
 
 export interface StartupScoreBreakdown {
   stage_score: number;

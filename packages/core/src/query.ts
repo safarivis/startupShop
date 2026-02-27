@@ -1,6 +1,6 @@
-import { loadAndValidateListings } from './registry.js';
-import { scoreStartups, type ScoredStartup } from './scoring.js';
-import type { ListingValidationResult, StartupListing } from './types.js';
+import { loadAndValidateListings } from './registry';
+import { scoreStartups, type ScoredStartup } from './scoring';
+import type { ListingValidationResult, StartupListing } from './types';
 
 export type StartupsSort = 'score' | 'mrr';
 
