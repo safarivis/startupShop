@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.4.0
+  version: 0.6.0
   description: Agent-navigable API for startup listings and offer submissions.
 servers:
   - url: http://localhost:3000
@@ -86,13 +86,19 @@ paths:
   /api/startups/{id}/metrics:
     get:
       summary: Proxy startup metrics from listing metrics_url
-      description: Server-side fetch with a 5-minute in-memory cache.
+      description: Returns latest successful metrics snapshot by default. Use `refresh=true` to force live fetch and persist a new snapshot.
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
+        - name: refresh
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Force live fetch and snapshot write.
       responses:
         '200':
           description: Metrics payload for startup
@@ -107,6 +113,27 @@ paths:
           description: Startup not found or startup has no metrics_url
         '502':
           description: Upstream metrics source failed
+  /api/internal/metrics/sync:
+    post:
+      summary: Run metrics snapshot sync across all startups with metrics_url
+      parameters:
+        - name: x-sync-token
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sync summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MetricsSyncSummary'
+        '401':
+          description: Unauthorized
   /api/offers:
     post:
       summary: Submit offer
@@ -249,7 +276,7 @@ components:
           items: { type: string }
     StartupMetrics:
       type: object
-      required: [startup_id, fetched_at, payload, cached]
+      required: [startup_id, fetched_at, payload, source, stale, cached, source_status]
       properties:
         startup_id:
           type: string
@@ -257,8 +284,39 @@ components:
           type: string
           format: date-time
         payload: {}
+        source:
+          type: string
+          enum: [snapshot, live]
+        stale:
+          type: boolean
         cached:
           type: boolean
+        source_status:
+          type: integer
+    MetricsSyncSummary:
+      type: object
+      required: [total, successful, failed, details]
+      properties:
+        total:
+          type: integer
+        successful:
+          type: integer
+        failed:
+          type: integer
+        details:
+          type: array
+          items:
+            type: object
+            required: [startup_id, success, source_status]
+            properties:
+              startup_id:
+                type: string
+              success:
+                type: boolean
+              source_status:
+                type: integer
+              error:
+                type: string
     OfferRequest:
       type: object
       required: [startup_id, buyer_name, buyer_email, offer_amount_usd, message]

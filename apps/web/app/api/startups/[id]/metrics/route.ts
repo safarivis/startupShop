@@ -1,18 +1,20 @@
 import { NextResponse } from 'next/server';
 
 import { logApiEvent } from '@/src/lib/logging';
-import { fetchStartupMetrics, MetricsFetchError } from '@/src/lib/metrics';
+import { getStartupMetrics, MetricsFetchError } from '@/src/lib/metrics';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-export async function GET(_request: Request, context: RouteContext) {
+export async function GET(request: Request, context: RouteContext) {
   const params = await context.params;
   const startedAt = Date.now();
+  const url = new URL(request.url);
+  const refresh = ['1', 'true', 'yes'].includes((url.searchParams.get('refresh') ?? '').toLowerCase());
 
   try {
-    const data = await fetchStartupMetrics(params.id);
+    const data = await getStartupMetrics(params.id, { refresh, fetchedVia: 'api' });
     logApiEvent({
       endpoint: '/api/startups/[id]/metrics',
       method: 'GET',

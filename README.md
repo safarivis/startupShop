@@ -68,3 +68,17 @@ Set `ADMIN_TOKEN` in `apps/web/.env`.
 
 - Endpoint: `GET /api/health`
 - Response: `{"data":{"status":"ok","timestamp":"..."}}`
+
+## Metrics Snapshots
+
+- Public read endpoint: `GET /api/startups/:id/metrics`
+  - Returns latest successful snapshot first.
+  - Use `?refresh=true` to force a live fetch and write a new snapshot.
+- Internal sync endpoint: `POST /api/internal/metrics/sync`
+  - Requires header: `x-sync-token: <METRICS_SYNC_TOKEN>`
+  - Intended for scheduled jobs/cron.
+
+Snapshot-related env vars:
+
+- `METRICS_SYNC_TOKEN` - auth token for internal sync endpoint
+- `METRICS_STALE_AFTER_MS` - threshold for stale indicator in UI/API (default `1800000`)
