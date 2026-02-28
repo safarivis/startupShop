@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { getStartupById } from '@startupshop/core';
-import { fetchStartupMetrics } from '@/src/lib/metrics';
+import { getStartupMetrics } from '@/src/lib/metrics';
 
 interface StartupDetailProps {
   params: Promise<{ id: string }>;
@@ -16,10 +16,10 @@ export default async function StartupDetailPage({ params }: StartupDetailProps) 
     notFound();
   }
 
-  let metrics: Awaited<ReturnType<typeof fetchStartupMetrics>> | null = null;
+  let metrics: Awaited<ReturnType<typeof getStartupMetrics>> | null = null;
   if (startup.metrics_url) {
     try {
-      metrics = await fetchStartupMetrics(startup.startup_id);
+      metrics = await getStartupMetrics(startup.startup_id, { refresh: false, fetchedVia: 'api' });
     } catch {
       metrics = null;
     }
@@ -30,7 +30,12 @@ export default async function StartupDetailPage({ params }: StartupDetailProps) 
       <section className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.6rem', alignItems: 'center' }}>
           <h1 style={{ marginTop: 0, marginBottom: 0 }}>{startup.identity.name}</h1>
-          {metrics ? <span className="badge verified">Verified</span> : null}
+          {metrics ? (
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              <span className="badge verified">Verified</span>
+              {metrics.stale ? <span className="badge">Stale</span> : null}
+            </div>
+          ) : null}
         </div>
         <p className="meta" style={{ marginTop: 0 }}>
           {startup.startup_id} · {startup.identity.category} · {startup.status.stage}
@@ -48,7 +53,12 @@ export default async function StartupDetailPage({ params }: StartupDetailProps) 
         <h2 style={{ marginTop: 0 }}>Metrics</h2>
         {metrics ? (
           <>
-            <p className="meta">Fetched at {metrics.fetched_at}{metrics.cached ? ' (cached)' : ''}</p>
+            <p className="meta">
+              Fetched at {metrics.fetched_at}
+              {metrics.cached ? ' (cached)' : ''}
+              {' · '}source: {metrics.source}
+              {metrics.stale ? ' · stale' : ''}
+            </p>
             <pre
               style={{
                 margin: 0,
