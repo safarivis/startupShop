@@ -1,0 +1,165 @@
+recon:
+  project: startupShop
+  version: v0.1.1
+  generated: "2026-02-28T05:31:00Z"
+  
+  git:
+    branch: main
+    commit: f88b9f1
+    remote: https://github.com/safarivis/startupShop.git
+    status: clean
+    last_5_commits:
+      - f88b9f1 feat(v0.1.1): add API tests, offer limits, and health logging (#11)
+      - 4dc1597 M4: Metrics proxy + Verified badge (#10)
+      - f3beac9 Merge pull request #7 from safarivis/feat/m2-ui
+      - 227b9e4 feat(m2): build catalog detail and offer UI pages
+      - 982e7a7 chore: update tsconfig from Next.js build
+
+  milestones:
+    - id: M0
+      name: Bootstrap + Registry
+      status: complete
+    - id: M1
+      name: API + Scoring
+      status: complete
+    - id: M2
+      name: UI
+      status: complete
+    - id: M3
+      name: Offers
+      status: complete
+    - id: M4
+      name: Metrics + Verified Badge
+      status: complete
+    - id: v0.1.1
+      name: API Hardening
+      status: complete
+
+  tests:
+    framework: vitest
+    files:
+      - apps/web/tests/api/health.test.ts
+      - apps/web/tests/api/metrics.test.ts
+      - apps/web/tests/api/offers.test.ts
+    total: 9
+    passing: 9
+    failing: 0
+
+  listings:
+    count: 3
+    status: valid
+    registry: index.yaml
+
+  api_endpoints:
+    - path: /api/health
+      methods: [GET]
+      status: implemented
+      tests: yes
+    - path: /api/startups
+      methods: [GET]
+      status: implemented
+      tests: no
+    - path: /api/startups/:id
+      methods: [GET]
+      status: implemented
+      tests: no
+    - path: /api/startups/:id/validation
+      methods: [GET]
+      status: implemented
+      tests: no
+    - path: /api/offers
+      methods: [POST]
+      status: implemented
+      tests: yes
+      protections:
+        - rate_limit: "10req/15min"
+        - body_limit: "16KB"
+    - path: /api/startups/:id/metrics
+      methods: [GET]
+      status: implemented
+      tests: yes
+
+  ui_routes:
+    - path: /
+      name: Catalog
+      status: implemented
+    - path: /startup/[id]
+      name: Detail
+      status: implemented
+    - path: /startup/[id]/offer
+      name: Offer Form
+      status: implemented
+    - path: /admin/offers
+      name: Admin
+      status: implemented
+      auth: ADMIN_TOKEN
+
+  security:
+    rate_limiting: implemented
+    payload_limits: implemented
+    structured_logging: implemented
+    auth: token_based_admin
+
+  ci_cd:
+    provider: github_actions
+    workflow: ci.yml
+    jobs:
+      - validate-listings
+      - test-api
+    status: green
+
+  infrastructure:
+    docker:
+      status: running
+      containers:
+        - name: truster-db
+          image: postgres:16-alpine
+          port: 5432
+        - name: qfieldcloud-app
+          port: "5678,8011"
+        - name: qfieldcloud-db
+          image: postgis/postgis:13-3.1-alpine
+          port: 5433
+    app_deployment: local_nodejs
+
+  blockers: []
+  risks:
+    - id: R1
+      description: SQLite not production-grade
+      mitigation: Migrate to PostgreSQL
+    - id: R2
+      description: Rate limit memory store
+      mitigation: Use Redis for multi-instance
+    - id: R3
+      description: ADMIN_TOKEN temporary auth
+      mitigation: Implement proper auth system
+
+  velocity:
+    customer_need: Marketplace for startup acquisition via Git-tracked listings
+    tech_capability: Next.js + SQLite + Prisma + AJV validation
+    unique_value: Git-native registry with integrated offer pipeline
+    base_rate_success: "95%"
+    kiss_check: pass
+    tdd_status: active
+
+  tasks:
+    - id: T1
+      title: PostgreSQL migration
+      status: backlog
+      assignee: unassigned
+      blocker: none
+    - id: T2
+      title: Redis rate limiting
+      status: backlog
+      assignee: unassigned
+      blocker: none
+    - id: T3
+      title: Proper auth system
+      status: backlog
+      assignee: unassigned
+      blocker: none
+    - id: T4
+      title: Production deployment
+      status: backlog
+      assignee: unassigned
+      blocker: none
