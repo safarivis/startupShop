@@ -1,15 +1,16 @@
 # STATUS
 
-- Last updated: 2026-03-01
+- Last updated: 2026-02-28
 - Milestones complete: 5 / 5 (M0, M1, M2, M3, M4)
 - Listings in registry: 3
 - Validation status: passing locally
 - API endpoints implemented: 10 / 10
 - OpenAPI coverage: v0.2.1 documented
-- UI pages implemented: 4 / 4 through M4
+- UI pages implemented: 5 / 5
 - Hardening (v0.1.1): complete
 - v0.2.0: complete (PR A-D merged)
-- v0.2.1: stabilization complete locally
+- v0.2.1: stabilization complete
+- v0.2.2: LewkAI design system theming complete locally
 
 ## Endpoint Status
 
@@ -50,3 +51,9 @@
 - Typecheck stabilized against stale `.next` artifacts
 - Security baseline headers enforced via middleware
 - Readiness now checks admin auth secret configuration
+
+## v0.2.2 Status
+
+- LewkAI styles applied to app shell + all existing UI routes
+- Tailwind v4 CSS entrypoint active in `app/globals.css`
+- Tailwind PostCSS plugin configured in `apps/web/postcss.config.js`
