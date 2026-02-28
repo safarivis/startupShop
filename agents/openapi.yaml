@@ -1,21 +1,18 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.6.0
-  description: Agent-navigable API for startup listings and offer submissions.
+  version: 0.8.0
+  description: Agent-navigable API for startup listings, offers, admin sessions, and operational checks.
 servers:
   - url: http://localhost:3000
 paths:
   /api/startups:
     get:
       summary: List startups
-      description: Returns startup listings with computed score and optional filtering/sorting.
       parameters:
         - name: category
           in: query
-          schema:
-            type: string
-          description: Exact category match filter (case-insensitive)
+          schema: { type: string }
         - name: stage
           in: query
           schema:
@@ -30,17 +27,6 @@ paths:
       responses:
         '200':
           description: Startup list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Startup'
-        '400':
-          description: Invalid query parameter
   /api/startups/{id}:
     get:
       summary: Get startup by id
@@ -48,20 +34,10 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
+          schema: { type: string }
       responses:
-        '200':
-          description: Startup detail
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Startup'
-        '404':
-          description: Startup not found
+        '200': { description: Startup detail }
+        '404': { description: Startup not found }
   /api/startups/{id}/validation:
     get:
       summary: Get startup validation status
@@ -69,287 +45,112 @@ paths:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
+          schema: { type: string }
       responses:
-        '200':
-          description: Validation status for startup
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ValidationResult'
-        '404':
-          description: Startup not found
+        '200': { description: Validation status }
+        '404': { description: Startup not found }
   /api/startups/{id}/metrics:
     get:
-      summary: Proxy startup metrics from listing metrics_url
-      description: Returns latest successful metrics snapshot by default. Use `refresh=true` to force live fetch and persist a new snapshot.
+      summary: Get startup metrics
+      description: Returns latest successful snapshot by default. Use refresh=true to force live fetch.
       parameters:
         - name: id
           in: path
           required: true
-          schema:
-            type: string
+          schema: { type: string }
         - name: refresh
           in: query
-          required: false
-          schema:
-            type: boolean
-          description: Force live fetch and snapshot write.
+          schema: { type: boolean }
       responses:
-        '200':
-          description: Metrics payload for startup
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/StartupMetrics'
-        '404':
-          description: Startup not found or startup has no metrics_url
-        '502':
-          description: Upstream metrics source failed
+        '200': { description: Metrics payload }
+        '404': { description: Startup not found or no metrics_url }
+        '502': { description: Upstream metrics source failed }
   /api/internal/metrics/sync:
     post:
-      summary: Run metrics snapshot sync across all startups with metrics_url
+      summary: Trigger metrics sync for all startups with metrics_url
       parameters:
         - name: x-sync-token
           in: header
           required: true
-          schema:
-            type: string
+          schema: { type: string }
       responses:
-        '200':
-          description: Sync summary
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/MetricsSyncSummary'
-        '401':
-          description: Unauthorized
+        '200': { description: Sync summary }
+        '401': { description: Unauthorized }
   /api/offers:
     post:
       summary: Submit offer
-      description: Validates offer payload against `schemas/offer.schema.json`, enforces request-size and rate limits, and stores accepted offers in SQLite.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OfferRequest'
       responses:
-        '201':
-          description: Offer accepted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/OfferCreated'
-        '400':
-          description: Invalid payload or unknown startup id
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                  details:
-                    type: array
-                    items:
-                      type: string
-        '413':
-          description: Payload too large
-        '429':
-          description: Rate limit exceeded
-        '500':
-          description: Offer persistence failed
+        '201': { description: Offer accepted }
+        '400': { description: Invalid payload or unknown startup }
+        '413': { description: Payload too large }
+        '429': { description: Rate limit exceeded }
+        '500': { description: Offer persistence failed }
+  /api/admin/session:
+    post:
+      summary: Admin login (creates session cookie)
+      responses:
+        '200': { description: Session created }
+        '400': { description: Invalid JSON }
+        '401': { description: Invalid credentials }
+    delete:
+      summary: Admin logout (requires valid session + CSRF)
+      parameters:
+        - name: x-csrf-token
+          in: header
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Session cleared }
+        '401': { description: Unauthorized }
+        '403': { description: Invalid CSRF token }
   /api/health:
     get:
-      summary: Health check endpoint
+      summary: Liveness check
+      responses:
+        '200': { description: Service is live }
+  /api/ready:
+    get:
+      summary: Readiness check
       responses:
         '200':
-          description: Service health status
+          description: Service dependencies are ready
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/HealthStatus'
+                    $ref: '#/components/schemas/ReadinessStatus'
+        '503':
+          description: Service dependencies are not ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReadinessStatus'
 components:
   schemas:
-    Startup:
+    ReadinessCheck:
       type: object
-      required:
-        [startup_id, identity, status, traction, mvp, tech, ops, deal, risks, metadata, score]
+      required: [ok, detail]
       properties:
-        startup_id:
-          type: string
-        identity:
-          type: object
-          properties:
-            name: { type: string }
-            category: { type: string }
-            summary: { type: string }
-            website: { type: string, format: uri }
-        status:
-          type: object
-          properties:
-            stage:
-              type: string
-              enum: [idea, mvp, early-revenue, growth, mature]
-            listed: { type: boolean }
-        traction:
-          type: object
-          properties:
-            mrr_usd: { type: number }
-            users: { type: integer }
-            growth_mom_percent: { type: number }
-        mvp:
-          type: object
-          properties:
-            live: { type: boolean }
-            notes: { type: string }
-        tech:
-          type: object
-          properties:
-            stack:
-              type: array
-              items: { type: string }
-            risk_level:
-              type: string
-              enum: [low, medium, high]
-        ops:
-          type: object
-          properties:
-            automation_level:
-              type: string
-              enum: [manual, semi-automated, automated]
-            owner_handoff_ready: { type: boolean }
-        deal:
-          type: object
-          properties:
-            ask_usd: { type: number }
-            terms: { type: string }
-        risks:
-          type: array
-          items: { type: string }
-        metadata:
-          type: object
-          properties:
-            created_at: { type: string, format: date }
-            updated_at: { type: string, format: date }
-        metrics_url:
-          type: string
-          format: uri
-        score:
-          $ref: '#/components/schemas/ScoreBreakdown'
-    ScoreBreakdown:
+        ok: { type: boolean }
+        detail: { type: string }
+    ReadinessStatus:
       type: object
-      required: [stage_score, traction_score, ops_readiness_score, tech_risk_score, unit_economics_score, total_score]
+      required: [ready, checks, timestamp]
       properties:
-        stage_score: { type: number }
-        traction_score: { type: number }
-        ops_readiness_score: { type: number }
-        tech_risk_score: { type: number }
-        unit_economics_score: { type: number }
-        total_score: { type: number }
-    ValidationResult:
-      type: object
-      required: [startup_id, path, valid, errors]
-      properties:
-        startup_id: { type: string }
-        path: { type: string }
-        valid: { type: boolean }
-        errors:
-          type: array
-          items: { type: string }
-    StartupMetrics:
-      type: object
-      required: [startup_id, fetched_at, payload, source, stale, cached, source_status]
-      properties:
-        startup_id:
-          type: string
-        fetched_at:
-          type: string
-          format: date-time
-        payload: {}
-        source:
-          type: string
-          enum: [snapshot, live]
-        stale:
-          type: boolean
-        cached:
-          type: boolean
-        source_status:
-          type: integer
-    MetricsSyncSummary:
-      type: object
-      required: [total, successful, failed, details]
-      properties:
-        total:
-          type: integer
-        successful:
-          type: integer
-        failed:
-          type: integer
-        details:
-          type: array
-          items:
-            type: object
-            required: [startup_id, success, source_status]
-            properties:
-              startup_id:
-                type: string
-              success:
-                type: boolean
-              source_status:
-                type: integer
-              error:
-                type: string
-    OfferRequest:
-      type: object
-      required: [startup_id, buyer_name, buyer_email, offer_amount_usd, message]
-      properties:
-        startup_id:
-          type: string
-        buyer_name:
-          type: string
-        buyer_email:
-          type: string
-          format: email
-        offer_amount_usd:
-          type: number
-        message:
-          type: string
-    OfferCreated:
-      type: object
-      required: [id, created_at, startup_id]
-      properties:
-        id:
-          type: integer
-        created_at:
-          type: string
-          format: date-time
-        startup_id:
-          type: string
-    HealthStatus:
-      type: object
-      required: [status, timestamp]
-      properties:
-        status:
-          type: string
-          enum: [ok]
+        ready: { type: boolean }
+        checks:
+          type: object
+          required: [db, redis, metrics_sync, admin_auth]
+          properties:
+            db: { $ref: '#/components/schemas/ReadinessCheck' }
+            redis: { $ref: '#/components/schemas/ReadinessCheck' }
+            metrics_sync: { $ref: '#/components/schemas/ReadinessCheck' }
+            admin_auth: { $ref: '#/components/schemas/ReadinessCheck' }
         timestamp:
           type: string
           format: date-time

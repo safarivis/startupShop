@@ -22,9 +22,9 @@ function decode(input: string): string {
 }
 
 function getSessionSecret(): string {
-  const secret = process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_TOKEN;
+  const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret) {
-    throw new Error('ADMIN_SESSION_SECRET or ADMIN_TOKEN must be configured');
+    throw new Error('ADMIN_SESSION_SECRET must be configured');
   }
   return secret;
 }
@@ -118,7 +118,7 @@ function cookieBase(isHttpOnly: boolean): Record<string, string | number | boole
 }
 
 export function adminPasswordIsValid(input: string): boolean {
-  const password = process.env.ADMIN_PASSWORD || process.env.ADMIN_TOKEN;
+  const password = process.env.ADMIN_PASSWORD;
   if (!password) {
     return false;
   }

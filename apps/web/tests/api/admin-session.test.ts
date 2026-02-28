@@ -57,6 +57,22 @@ describe('Admin session API', () => {
     expect(response.status).toBe(401);
   });
 
+  it('rejects login when ADMIN_PASSWORD is not configured', async () => {
+    delete process.env.ADMIN_PASSWORD;
+    delete process.env.ADMIN_TOKEN;
+
+    const { POST } = await import('@/app/api/admin/session/route');
+    const response = await POST(
+      new Request('http://localhost:3000/api/admin/session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ password: 'super-secret-pass' })
+      })
+    );
+
+    expect(response.status).toBe(401);
+  });
+
   it('requires CSRF token for logout', async () => {
     const { POST, DELETE } = await import('@/app/api/admin/session/route');
 

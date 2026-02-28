@@ -11,6 +11,7 @@ export interface ReadyStatus {
     db: ReadyCheck;
     redis: ReadyCheck;
     metrics_sync: ReadyCheck;
+    admin_auth: ReadyCheck;
   };
   timestamp: string;
 }
@@ -65,18 +66,32 @@ function checkMetricsSyncConfig(): ReadyCheck {
   return { ok: true, detail: 'metrics_sync_configured' };
 }
 
+function checkAdminAuthConfig(): ReadyCheck {
+  if (!process.env.ADMIN_PASSWORD) {
+    return { ok: false, detail: 'ADMIN_PASSWORD_missing' };
+  }
+
+  if (!process.env.ADMIN_SESSION_SECRET) {
+    return { ok: false, detail: 'ADMIN_SESSION_SECRET_missing' };
+  }
+
+  return { ok: true, detail: 'admin_auth_configured' };
+}
+
 export async function getReadinessStatus(): Promise<ReadyStatus> {
   const [db, redis] = await Promise.all([checkDb(), checkRedis()]);
   const metrics_sync = checkMetricsSyncConfig();
+  const admin_auth = checkAdminAuthConfig();
 
-  const ready = db.ok && redis.ok && metrics_sync.ok;
+  const ready = db.ok && redis.ok && metrics_sync.ok && admin_auth.ok;
 
   return {
     ready,
     checks: {
       db,
       redis,
-      metrics_sync
+      metrics_sync,
+      admin_auth
     },
     timestamp: new Date().toISOString()
   };
