@@ -13,7 +13,8 @@ This runbook covers operational setup and recovery for:
 Set these in `apps/web/.env` (or production secret manager):
 
 - `DATABASE_URL`
-- `ADMIN_TOKEN`
+- `ADMIN_PASSWORD`
+- `ADMIN_SESSION_SECRET`
 - `REDIS_URL`
 - `METRICS_SYNC_TOKEN`
 
@@ -34,6 +35,7 @@ Optional tuning:
 - Database query success
 - Redis ping success
 - Presence of `METRICS_SYNC_TOKEN`
+- Presence of admin auth secrets (`ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`)
 
 If readiness fails, endpoint returns `503` with check details.
 

@@ -35,6 +35,8 @@ describe('GET /api/ready', () => {
   it('returns 503 when readiness dependencies are missing', async () => {
     delete process.env.REDIS_URL;
     delete process.env.METRICS_SYNC_TOKEN;
+    delete process.env.ADMIN_PASSWORD;
+    delete process.env.ADMIN_SESSION_SECRET;
 
     const { GET } = await import('@/app/api/ready/route');
     const response = await GET();
@@ -44,11 +46,14 @@ describe('GET /api/ready', () => {
     expect(body.data.ready).toBe(false);
     expect(body.data.checks.redis.ok).toBe(false);
     expect(body.data.checks.metrics_sync.ok).toBe(false);
+    expect(body.data.checks.admin_auth.ok).toBe(false);
   });
 
-  it('returns 200 when db, redis, and sync config are healthy', async () => {
+  it('returns 200 when db, redis, sync config, and admin auth are healthy', async () => {
     process.env.REDIS_URL = 'redis://localhost:6379';
     process.env.METRICS_SYNC_TOKEN = 'sync-secret';
+    process.env.ADMIN_PASSWORD = 'secret-password';
+    process.env.ADMIN_SESSION_SECRET = 'secret-session';
 
     connectMock.mockResolvedValue(undefined);
     pingMock.mockResolvedValue('PONG');
@@ -63,5 +68,6 @@ describe('GET /api/ready', () => {
     expect(body.data.checks.db.ok).toBe(true);
     expect(body.data.checks.redis.ok).toBe(true);
     expect(body.data.checks.metrics_sync.ok).toBe(true);
+    expect(body.data.checks.admin_auth.ok).toBe(true);
   });
 });

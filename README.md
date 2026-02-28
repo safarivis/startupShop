@@ -81,12 +81,32 @@ Set these in `apps/web/.env`:
 - `ADMIN_SESSION_SECRET` - signing secret for session tokens
 - `ADMIN_SESSION_TTL_SECONDS` - session lifetime in seconds (default `28800`)
 
-`ADMIN_TOKEN` is retained as a compatibility fallback and should be considered deprecated.
-
 ## Health Check
 
 - Endpoint: `GET /api/health`
 - Response: `{"data":{"status":"ok","timestamp":"..."}}`
+
+## Readiness Check
+
+- Endpoint: `GET /api/ready`
+- Returns `200` when all required dependencies/config are ready.
+- Returns `503` with check details when any dependency/config check fails.
+- Readiness checks include:
+  - DB connectivity
+  - Redis connectivity
+  - `METRICS_SYNC_TOKEN` presence
+  - admin auth secret config (`ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`)
+
+## Security Baseline
+
+- Global security response headers are set by middleware:
+  - `X-Frame-Options: DENY`
+  - `X-Content-Type-Options: nosniff`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+  - `Cross-Origin-Opener-Policy: same-origin`
+  - `Cross-Origin-Resource-Policy: same-origin`
+  - `Strict-Transport-Security` in production
 
 ## Metrics Snapshots
 
