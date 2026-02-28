@@ -9,12 +9,14 @@ startupShop is a Next.js monorepo for browsing startup listings stored in Git, v
 - Shared registry/validation in `packages/core`
 - YAML listing format
 - JSON Schema validation
-- SQLite + Prisma for offers (planned in M3)
+- SQLite + Prisma for offers
 
 ## Local Development
 
 ```bash
 pnpm install
+cp apps/web/.env.example apps/web/.env
+pnpm db:migrate
 pnpm dev
 ```
 
@@ -24,13 +26,13 @@ pnpm dev
 pnpm validate:listings
 ```
 
-CI also runs listing validation on pull requests and pushes.
+CI runs listing validation on pull requests and pushes.
 
 ## Add a Listing
 
 1. Create a file at `listings/<startup-id>.yaml`.
 2. Ensure it matches `schemas/startupshop.schema.json`.
-3. Add entry to `index.yaml`:
+3. Add an entry to `index.yaml`:
 
 ```yaml
 listings:
@@ -42,9 +44,16 @@ listings:
 
 ## Submit an Offer
 
-Offer flow is implemented in M3:
-
-- API endpoint: `POST /api/offers`
 - UI page: `/startup/[id]/offer`
+- API endpoint: `POST /api/offers`
 
-Offer payload schema is defined now in `schemas/offer.schema.json`.
+Offer payload must match `schemas/offer.schema.json`.
+
+## Admin Offers
+
+- UI page: `/admin/offers`
+- Provide token either as:
+  - query: `/admin/offers?token=<ADMIN_TOKEN>`
+  - header: `x-admin-token: <ADMIN_TOKEN>`
+
+Set `ADMIN_TOKEN` in `apps/web/.env`.

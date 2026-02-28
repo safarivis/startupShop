@@ -12,6 +12,9 @@
     "paths": {
       "@startupshop/core": [
         "../../packages/core/src/index.ts"
+      ],
+      "@/*": [
+        "./*"
       ]
     },
     "incremental": true,

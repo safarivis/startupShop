@@ -30,11 +30,11 @@
 
 ## M3 Offers
 
-- [ ] Prisma + SQLite in `apps/web`
-- [ ] `POST /api/offers`
-- [ ] Admin offers page with `ADMIN_TOKEN`
+- [x] Prisma + SQLite in `apps/web`
+- [x] `POST /api/offers`
+- [x] Admin offers page with `ADMIN_TOKEN`
 
 ## M4 Metrics + Verified Badge
 
-- [ ] `GET /api/startups/:id/metrics` proxy + caching
-- [ ] UI metrics display + verified badge
+- [x] `GET /api/startups/:id/metrics` proxy + caching
+- [x] UI metrics display + verified badge
