@@ -1,13 +1,14 @@
 # STATUS
 
-- Last updated: 2026-02-28
+- Last updated: 2026-03-01
 - Milestones complete: 5 / 5 (M0, M1, M2, M3, M4)
 - Listings in registry: 3
 - Validation status: passing locally
 - API endpoints implemented: 5 / 5
 - OpenAPI coverage: all MVP endpoints documented
 - UI pages implemented: 4 / 4 through M4
-- Hardening (v0.1.1): in progress (tests, rate limits, health/logging implemented)
+- Hardening (v0.1.1): complete
+- v0.2.0 PR A: complete locally (Redis limiter + failure mode + tests)
 
 ## Endpoint Status
 
@@ -29,3 +30,9 @@
 - API test suite: implemented (`pnpm test:api`)
 - Offer abuse controls: implemented (`413` body cap, `429` IP rate limit)
 - Observability: structured API logs + `GET /api/health`
+
+## v0.2.0 Status
+
+- Redis-backed limiter: implemented for `POST /api/offers` when `REDIS_URL` is set
+- Failure mode: configurable with `RATE_LIMIT_REDIS_FAILURE_MODE` (`fail_closed` default)
+- Degraded fallback: in-memory limiter if Redis URL is unset (dev) or explicit fail-open on Redis outage
