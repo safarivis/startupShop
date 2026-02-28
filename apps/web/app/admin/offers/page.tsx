@@ -1,40 +1,16 @@
-import { headers } from 'next/headers';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
+import { adminSessionCookieNames, isAdminSessionTokenValid } from '@/src/lib/admin-auth';
 import { prisma } from '@/src/lib/prisma';
+import { LogoutButton } from './logout-button';
 
-interface AdminOffersProps {
-  searchParams: Promise<{ token?: string }>;
-}
-
-async function readHeaderToken(): Promise<string | null> {
-  const h = await headers();
-  const direct = h.get('x-admin-token');
-  if (direct) {
-    return direct;
-  }
-
-  const auth = h.get('authorization');
-  if (!auth) {
-    return null;
-  }
-
-  return auth.replace(/^Bearer\s+/i, '').trim() || null;
-}
-
-export default async function AdminOffersPage({ searchParams }: AdminOffersProps) {
-  const params = await searchParams;
-  const expected = process.env.ADMIN_TOKEN;
-  const provided = params.token ?? (await readHeaderToken());
-
-  if (!expected || provided !== expected) {
-    return (
-      <main>
-        <section className="card">
-          <h1 style={{ marginTop: 0 }}>Admin Offers</h1>
-          <p className="notice">Unauthorized. Provide ADMIN_TOKEN via `?token=` or `x-admin-token` header.</p>
-        </section>
-      </main>
-    );
+export default async function AdminOffersPage() {
+  const cookieStore = await cookies();
+  const cookieNames = adminSessionCookieNames();
+  const sessionToken = cookieStore.get(cookieNames.session)?.value ?? null;
+  if (!isAdminSessionTokenValid(sessionToken)) {
+    redirect('/admin/login');
   }
 
   const offers = await prisma.offer.findMany({
@@ -49,6 +25,9 @@ export default async function AdminOffersPage({ searchParams }: AdminOffersProps
         <p className="meta" style={{ marginBottom: 0 }}>
           Showing {offers.length} most recent offer{offers.length === 1 ? '' : 's'}.
         </p>
+        <div style={{ marginTop: '0.7rem' }}>
+          <LogoutButton />
+        </div>
       </section>
 
       <section className="card" style={{ overflowX: 'auto' }}>
