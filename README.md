@@ -34,6 +34,19 @@ CI runs listing validation on pull requests and pushes.
 pnpm test:api
 ```
 
+## Rate Limiting (Offers API)
+
+`POST /api/offers` uses Redis-backed fixed-window limiting when `REDIS_URL` is set.
+
+Config (in `apps/web/.env`):
+
+- `REDIS_URL` - Redis connection URL (enables distributed limiter)
+- `OFFER_RATE_LIMIT_MAX_REQUESTS` - max requests per window (default `10`)
+- `OFFER_RATE_LIMIT_WINDOW_MS` - window duration in ms (default `900000`)
+- `RATE_LIMIT_REDIS_FAILURE_MODE` - `fail_closed` (default) or `fail_open`
+
+If `REDIS_URL` is unset, the app falls back to in-memory limiting for local/dev use.
+
 ## Add a Listing
 
 1. Create a file at `listings/<startup-id>.yaml`.

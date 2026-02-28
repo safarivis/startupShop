@@ -2,6 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const createMock = vi.fn();
 
+vi.mock('redis', () => ({
+  createClient: vi.fn(() => ({
+    connect: vi.fn().mockResolvedValue(undefined),
+    incr: vi.fn().mockResolvedValue(1),
+    pExpire: vi.fn().mockResolvedValue(undefined)
+  }))
+}));
+
 vi.mock('@/src/lib/prisma', () => ({
   prisma: {
     offer: {
