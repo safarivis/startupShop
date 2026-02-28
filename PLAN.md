@@ -36,5 +36,5 @@
 
 ## M4 Metrics + Verified Badge
 
-- [ ] `GET /api/startups/:id/metrics` proxy + caching
-- [ ] UI metrics display + verified badge
+- [x] `GET /api/startups/:id/metrics` proxy + caching
+- [x] UI metrics display + verified badge

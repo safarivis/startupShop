@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.3.0
+  version: 0.4.0
   description: Agent-navigable API for startup listings and offer submissions.
 servers:
   - url: http://localhost:3000
@@ -83,6 +83,30 @@ paths:
                     $ref: '#/components/schemas/ValidationResult'
         '404':
           description: Startup not found
+  /api/startups/{id}/metrics:
+    get:
+      summary: Proxy startup metrics from listing metrics_url
+      description: Server-side fetch with a 5-minute in-memory cache.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metrics payload for startup
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/StartupMetrics'
+        '404':
+          description: Startup not found or startup has no metrics_url
+        '502':
+          description: Upstream metrics source failed
   /api/offers:
     post:
       summary: Submit offer
@@ -204,6 +228,18 @@ components:
         errors:
           type: array
           items: { type: string }
+    StartupMetrics:
+      type: object
+      required: [startup_id, fetched_at, payload, cached]
+      properties:
+        startup_id:
+          type: string
+        fetched_at:
+          type: string
+          format: date-time
+        payload: {}
+        cached:
+          type: boolean
     OfferRequest:
       type: object
       required: [startup_id, buyer_name, buyer_email, offer_amount_usd, message]

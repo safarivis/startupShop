@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { getStartupById } from '@startupshop/core';
+import { fetchStartupMetrics } from '@/src/lib/metrics';
 
 interface StartupDetailProps {
   params: Promise<{ id: string }>;
@@ -15,10 +16,22 @@ export default async function StartupDetailPage({ params }: StartupDetailProps) 
     notFound();
   }
 
+  let metrics: Awaited<ReturnType<typeof fetchStartupMetrics>> | null = null;
+  if (startup.metrics_url) {
+    try {
+      metrics = await fetchStartupMetrics(startup.startup_id);
+    } catch {
+      metrics = null;
+    }
+  }
+
   return (
     <main className="detail-layout">
       <section className="card">
-        <h1 style={{ marginTop: 0 }}>{startup.identity.name}</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.6rem', alignItems: 'center' }}>
+          <h1 style={{ marginTop: 0, marginBottom: 0 }}>{startup.identity.name}</h1>
+          {metrics ? <span className="badge verified">Verified</span> : null}
+        </div>
         <p className="meta" style={{ marginTop: 0 }}>
           {startup.startup_id} · {startup.identity.category} · {startup.status.stage}
         </p>
@@ -29,6 +42,32 @@ export default async function StartupDetailPage({ params }: StartupDetailProps) 
             {startup.identity.website}
           </a>
         </p>
+      </section>
+
+      <section className="card">
+        <h2 style={{ marginTop: 0 }}>Metrics</h2>
+        {metrics ? (
+          <>
+            <p className="meta">Fetched at {metrics.fetched_at}{metrics.cached ? ' (cached)' : ''}</p>
+            <pre
+              style={{
+                margin: 0,
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                background: '#f5f9fc',
+                border: '1px solid #d2dce6',
+                borderRadius: '10px',
+                padding: '0.7rem'
+              }}
+            >
+              {JSON.stringify(metrics.payload, null, 2)}
+            </pre>
+          </>
+        ) : (
+          <p className="meta" style={{ marginBottom: 0 }}>
+            No verified metrics available for this listing yet.
+          </p>
+        )}
       </section>
 
       <section className="stats">
