@@ -16,7 +16,7 @@ import type {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function detectRepoRoot(): string {
+export function resolveRepoRoot(): string {
   const candidates = [
     process.env.STARTUPSHOP_REPO_ROOT,
     process.cwd(),
@@ -29,7 +29,7 @@ function detectRepoRoot(): string {
   return match ?? path.resolve(__dirname, '../../../');
 }
 
-const DEFAULT_REPO_ROOT = detectRepoRoot();
+const DEFAULT_REPO_ROOT = resolveRepoRoot();
 
 function loadYamlFile<T>(filePath: string): T {
   const raw = fs.readFileSync(filePath, 'utf8');

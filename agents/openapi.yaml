@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.2.0
+  version: 0.3.0
   description: Agent-navigable API for startup listings and offer submissions.
 servers:
   - url: http://localhost:3000
@@ -86,6 +86,7 @@ paths:
   /api/offers:
     post:
       summary: Submit offer
+      description: Validates offer payload against `schemas/offer.schema.json` and stores it in SQLite.
       requestBody:
         required: true
         content:
@@ -95,8 +96,26 @@ paths:
       responses:
         '201':
           description: Offer accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OfferCreated'
         '400':
-          description: Invalid payload
+          description: Invalid payload or unknown startup id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: string
 components:
   schemas:
     Startup:
@@ -199,4 +218,15 @@ components:
         offer_amount_usd:
           type: number
         message:
+          type: string
+    OfferCreated:
+      type: object
+      required: [id, created_at, startup_id]
+      properties:
+        id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        startup_id:
           type: string
