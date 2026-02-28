@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.5.0
+  version: 0.4.0
   description: Agent-navigable API for startup listings and offer submissions.
 servers:
   - url: http://localhost:3000
@@ -110,7 +110,7 @@ paths:
   /api/offers:
     post:
       summary: Submit offer
-      description: Validates offer payload against `schemas/offer.schema.json`, enforces request-size/rate limits, and stores accepted offers in SQLite.
+      description: Validates offer payload against `schemas/offer.schema.json`, enforces request-size and rate limits, and stores accepted offers in SQLite.
       requestBody:
         required: true
         content:
@@ -146,44 +146,6 @@ paths:
           description: Rate limit exceeded
         '500':
           description: Offer persistence failed
-  /api/admin/session:
-    post:
-      summary: Create admin session
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminLoginRequest'
-      responses:
-        '200':
-          description: Session created (sets session + csrf cookies)
-          headers:
-            Set-Cookie:
-              description: `admin_session` (httpOnly) and `admin_csrf` cookies
-              schema:
-                type: string
-        '400':
-          description: Invalid JSON
-        '401':
-          description: Invalid credentials
-    delete:
-      summary: Destroy admin session
-      security:
-        - AdminSessionCookie: []
-      parameters:
-        - name: x-csrf-token
-          in: header
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Session cleared
-        '401':
-          description: Unauthorized
-        '403':
-          description: Invalid CSRF token
   /api/health:
     get:
       summary: Health check endpoint
@@ -198,11 +160,6 @@ paths:
                   data:
                     $ref: '#/components/schemas/HealthStatus'
 components:
-  securitySchemes:
-    AdminSessionCookie:
-      type: apiKey
-      in: cookie
-      name: admin_session
   schemas:
     Startup:
       type: object
@@ -327,12 +284,6 @@ components:
           type: string
           format: date-time
         startup_id:
-          type: string
-    AdminLoginRequest:
-      type: object
-      required: [password]
-      properties:
-        password:
           type: string
     HealthStatus:
       type: object
