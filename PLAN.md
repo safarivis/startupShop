@@ -44,3 +44,10 @@
 - [x] API tests for offers and metrics routes
 - [x] Offer API rate limit + payload size limit
 - [x] Structured API logging + `/api/health` endpoint
+
+## v0.2.0 Operational Quality
+
+- [ ] PR A: Redis-backed offer rate limiting + failure-mode handling + tests
+- [x] PR B: Admin auth upgrade (session/cookie + CSRF)
+- [ ] PR C: Metrics background sync + DB snapshots
+- [ ] PR D: OpenAPI/docs/readiness finalization
