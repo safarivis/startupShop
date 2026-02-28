@@ -19,3 +19,17 @@ model Offer {
   @@index([startup_id])
   @@index([created_at])
 }
+
+model MetricsSnapshot {
+  id            Int      @id @default(autoincrement())
+  startup_id    String
+  fetched_at    DateTime @default(now())
+  payload       String?
+  source_status Int
+  success       Boolean
+  error_message String?
+  fetched_via   String   @default("api")
+
+  @@index([startup_id, fetched_at])
+  @@index([success, fetched_at])
+}

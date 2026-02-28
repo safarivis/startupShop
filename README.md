@@ -34,6 +34,19 @@ CI runs listing validation on pull requests and pushes.
 pnpm test:api
 ```
 
+## Rate Limiting (Offers API)
+
+`POST /api/offers` uses Redis-backed fixed-window limiting when `REDIS_URL` is set.
+
+Config (in `apps/web/.env`):
+
+- `REDIS_URL` - Redis connection URL (enables distributed limiter)
+- `OFFER_RATE_LIMIT_MAX_REQUESTS` - max requests per window (default `10`)
+- `OFFER_RATE_LIMIT_WINDOW_MS` - window duration in ms (default `900000`)
+- `RATE_LIMIT_REDIS_FAILURE_MODE` - `fail_closed` (default) or `fail_open`
+
+If `REDIS_URL` is unset, the app falls back to in-memory limiting for local/dev use.
+
 ## Add a Listing
 
 1. Create a file at `listings/<startup-id>.yaml`.
@@ -55,26 +68,36 @@ listings:
 
 Offer payload must match `schemas/offer.schema.json`.
 
-## Admin Offers
+## Admin Access
 
-- UI page: `/admin/offers`
-- Provide token either as:
-  - query: `/admin/offers?token=<ADMIN_TOKEN>`
-  - header: `x-admin-token: <ADMIN_TOKEN>`
+- Login page: `/admin/login`
+- Admin offers page: `/admin/offers`
+- Auth model: secure httpOnly session cookie
+- CSRF model: `admin_csrf` cookie + `x-csrf-token` header for state-changing admin actions (for example logout)
 
-Set `ADMIN_TOKEN` in `apps/web/.env`.
+Set these in `apps/web/.env`:
+
+- `ADMIN_PASSWORD` - required admin login password
+- `ADMIN_SESSION_SECRET` - signing secret for session tokens
+- `ADMIN_SESSION_TTL_SECONDS` - session lifetime in seconds (default `28800`)
+
+`ADMIN_TOKEN` is retained as a compatibility fallback and should be considered deprecated.
 
 ## Health Check
 
 - Endpoint: `GET /api/health`
 - Response: `{"data":{"status":"ok","timestamp":"..."}}`
 
-## Readiness Check
+## Metrics Snapshots
 
-- Endpoint: `GET /api/ready`
-- Returns `200` when DB, Redis, and metrics sync config are ready.
-- Returns `503` with check details when dependencies are not ready.
+- Public read endpoint: `GET /api/startups/:id/metrics`
+  - Returns latest successful snapshot first.
+  - Use `?refresh=true` to force a live fetch and write a new snapshot.
+- Internal sync endpoint: `POST /api/internal/metrics/sync`
+  - Requires header: `x-sync-token: <METRICS_SYNC_TOKEN>`
+  - Intended for scheduled jobs/cron.
 
-## Operations Runbook
+Snapshot-related env vars:
 
-- See [docs/runbook.md](/home/louisdup/projects/startupShop/docs/runbook.md) for Redis setup, metrics sync scheduling, and recovery steps.
+- `METRICS_SYNC_TOKEN` - auth token for internal sync endpoint
+- `METRICS_STALE_AFTER_MS` - threshold for stale indicator in UI/API (default `1800000`)

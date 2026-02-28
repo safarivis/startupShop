@@ -3,6 +3,8 @@ export interface ApiLogEvent {
   method: string;
   status: number;
   latency_ms: number;
+  limiter_source?: 'redis' | 'memory';
+  degraded?: boolean;
   startup_id?: string;
   error_code?: string;
   cache?: 'hit' | 'miss';
