@@ -68,3 +68,13 @@ Set `ADMIN_TOKEN` in `apps/web/.env`.
 
 - Endpoint: `GET /api/health`
 - Response: `{"data":{"status":"ok","timestamp":"..."}}`
+
+## Readiness Check
+
+- Endpoint: `GET /api/ready`
+- Returns `200` when DB, Redis, and metrics sync config are ready.
+- Returns `503` with check details when dependencies are not ready.
+
+## Operations Runbook
+
+- See [docs/runbook.md](/home/louisdup/projects/startupShop/docs/runbook.md) for Redis setup, metrics sync scheduling, and recovery steps.

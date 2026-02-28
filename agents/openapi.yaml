@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: startupShop Agent API
-  version: 0.4.0
+  version: 0.7.0
   description: Agent-navigable API for startup listings and offer submissions.
 servers:
   - url: http://localhost:3000
@@ -159,6 +159,28 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/HealthStatus'
+  /api/ready:
+    get:
+      summary: Readiness check endpoint
+      responses:
+        '200':
+          description: Service dependencies are ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReadinessStatus'
+        '503':
+          description: One or more dependencies are not ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReadinessStatus'
 components:
   schemas:
     Startup:
@@ -292,6 +314,33 @@ components:
         status:
           type: string
           enum: [ok]
+        timestamp:
+          type: string
+          format: date-time
+    ReadinessCheck:
+      type: object
+      required: [ok, detail]
+      properties:
+        ok:
+          type: boolean
+        detail:
+          type: string
+    ReadinessStatus:
+      type: object
+      required: [ready, checks, timestamp]
+      properties:
+        ready:
+          type: boolean
+        checks:
+          type: object
+          required: [db, redis, metrics_sync]
+          properties:
+            db:
+              $ref: '#/components/schemas/ReadinessCheck'
+            redis:
+              $ref: '#/components/schemas/ReadinessCheck'
+            metrics_sync:
+              $ref: '#/components/schemas/ReadinessCheck'
         timestamp:
           type: string
           format: date-time
