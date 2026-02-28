@@ -38,3 +38,9 @@
 
 - [x] `GET /api/startups/:id/metrics` proxy + caching
 - [x] UI metrics display + verified badge
+
+## v0.1.1 Hardening
+
+- [x] API tests for offers and metrics routes
+- [x] Offer API rate limit + payload size limit
+- [x] Structured API logging + `/api/health` endpoint

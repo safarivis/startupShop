@@ -7,6 +7,7 @@
 - API endpoints implemented: 5 / 5
 - OpenAPI coverage: all MVP endpoints documented
 - UI pages implemented: 4 / 4 through M4
+- Hardening (v0.1.1): in progress (tests, rate limits, health/logging implemented)
 
 ## Endpoint Status
 
@@ -22,3 +23,9 @@
 - `/startup/[id]` - implemented (M2 detail + M4 metrics/verified badge)
 - `/startup/[id]/offer` - implemented (M2 offer form)
 - `/admin/offers` - implemented (M3 admin view)
+
+## Hardening Status
+
+- API test suite: implemented (`pnpm test:api`)
+- Offer abuse controls: implemented (`413` body cap, `429` IP rate limit)
+- Observability: structured API logs + `GET /api/health`

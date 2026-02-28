@@ -9,6 +9,16 @@ export interface StartupMetricsSuccess {
   cached: boolean;
 }
 
+export class MetricsFetchError extends Error {
+  upstreamStatus?: number;
+
+  constructor(message: string, upstreamStatus?: number) {
+    super(message);
+    this.name = 'MetricsFetchError';
+    this.upstreamStatus = upstreamStatus;
+  }
+}
+
 interface CacheEntry {
   value: StartupMetricsSuccess;
   expiresAt: number;
@@ -50,11 +60,11 @@ function writeCache(startupId: string, value: StartupMetricsSuccess): StartupMet
 export async function fetchStartupMetrics(startupId: string): Promise<StartupMetricsSuccess> {
   const startup = getStartupById(startupId);
   if (!startup) {
-    throw new Error('Startup not found');
+    throw new MetricsFetchError('Startup not found');
   }
 
   if (!startup.metrics_url) {
-    throw new Error('metrics_url not configured for startup');
+    throw new MetricsFetchError('metrics_url not configured for startup');
   }
 
   const cached = readCache(startupId);
@@ -71,10 +81,15 @@ export async function fetchStartupMetrics(startupId: string): Promise<StartupMet
   });
 
   if (!response.ok) {
-    throw new Error(`Metrics fetch failed (${response.status})`);
+    throw new MetricsFetchError(`Metrics fetch failed (${response.status})`, response.status);
   }
 
-  const payload = await response.json();
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new MetricsFetchError('Metrics response was not valid JSON', response.status);
+  }
   return writeCache(startupId, {
     startup_id: startupId,
     fetched_at: new Date().toISOString(),

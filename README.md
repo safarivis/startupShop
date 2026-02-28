@@ -28,6 +28,12 @@ pnpm validate:listings
 
 CI runs listing validation on pull requests and pushes.
 
+## API Tests
+
+```bash
+pnpm test:api
+```
+
 ## Add a Listing
 
 1. Create a file at `listings/<startup-id>.yaml`.
@@ -57,3 +63,8 @@ Offer payload must match `schemas/offer.schema.json`.
   - header: `x-admin-token: <ADMIN_TOKEN>`
 
 Set `ADMIN_TOKEN` in `apps/web/.env`.
+
+## Health Check
+
+- Endpoint: `GET /api/health`
+- Response: `{"data":{"status":"ok","timestamp":"..."}}`

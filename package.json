@@ -8,6 +8,7 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "validate:listings": "pnpm --filter @startupshop/core validate:listings",
+    "test:api": "pnpm --filter @startupshop/web test:api",
     "db:migrate": "pnpm --filter @startupshop/web prisma:migrate",
     "db:generate": "pnpm --filter @startupshop/web prisma:generate"
   }
