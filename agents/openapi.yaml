@@ -137,7 +137,7 @@ paths:
   /api/offers:
     post:
       summary: Submit offer
-      description: Validates offer payload against `schemas/offer.schema.json` and stores it in SQLite.
+      description: Validates offer payload against `schemas/offer.schema.json`, enforces request-size and rate limits, and stores accepted offers in SQLite.
       requestBody:
         required: true
         content:

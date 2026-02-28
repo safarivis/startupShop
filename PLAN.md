@@ -47,7 +47,7 @@
 
 ## v0.2.0 Operational Quality
 
-- [ ] PR A: Redis-backed offer rate limiting + failure-mode handling + tests
+- [x] PR A: Redis-backed offer rate limiting + failure-mode handling + tests
 - [ ] PR B: Admin auth upgrade (session/cookie + CSRF)
-- [x] PR C: Metrics background sync + DB snapshots
+- [ ] PR C: Metrics background sync + DB snapshots
 - [ ] PR D: OpenAPI/docs/readiness finalization
