@@ -1,4 +1,6 @@
 startup_id: shelfsense
+bucket: future
+visibility: internal
 identity:
   name: ShelfSense
   category: Retail Analytics SaaS

@@ -1,12 +1,14 @@
 import { loadAndValidateListings } from './registry';
 import { scoreStartups, type ScoredStartup } from './scoring';
-import type { ListingValidationResult, StartupListing } from './types';
+import type { ListingValidationResult, ListingVisibility, PortfolioBucket, StartupListing } from './types';
 
 export type StartupsSort = 'score' | 'mrr';
 
 export interface StartupsQuery {
   category?: string;
   stage?: StartupListing['status']['stage'];
+  bucket?: PortfolioBucket;
+  visibility?: ListingVisibility;
   sort?: StartupsSort;
 }
 
@@ -33,6 +35,14 @@ export function getStartups(query: StartupsQuery = {}): StartupWithScore[] {
 
   if (query.stage) {
     result = result.filter((entry) => entry.status.stage === query.stage);
+  }
+
+  if (query.bucket) {
+    result = result.filter((entry) => entry.bucket === query.bucket);
+  }
+
+  if (query.visibility) {
+    result = result.filter((entry) => entry.visibility === query.visibility);
   }
 
   const sortBy = query.sort ?? 'score';

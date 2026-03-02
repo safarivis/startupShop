@@ -1,0 +1,33 @@
+startup_id: truster
+bucket: current
+visibility: internal
+identity:
+  name: truster
+  category: Internal Project
+  summary: Active LewkAI project tracked in the internal portfolio dashboard.
+  website: https://example.com/truster
+status:
+  stage: mvp
+  listed: false
+traction:
+  mrr_usd: 0
+  users: 0
+  growth_mom_percent: 0
+mvp:
+  live: false
+  notes: Internal tracking listing pending detailed project profile.
+tech:
+  stack:
+    - TBD
+  risk_level: medium
+ops:
+  automation_level: manual
+  owner_handoff_ready: false
+deal:
+  ask_usd: 0
+  terms: Internal only; not currently open for investor offers.
+risks:
+  - Discovery and execution details still being standardized.
+metadata:
+  created_at: 2026-03-02
+  updated_at: 2026-03-02

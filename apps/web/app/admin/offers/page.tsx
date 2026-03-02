@@ -1,9 +1,9 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { adminSessionCookieNames, isAdminSessionTokenValid } from '@/src/lib/admin-auth';
-import { prisma } from '@/src/lib/prisma';
-import { LogoutButton } from './logout-button';
+import { adminSessionCookieNames, isAdminSessionTokenValid } from "@/src/lib/admin-auth";
+import { prisma } from "@/src/lib/prisma";
+import { LogoutButton } from "./logout-button";
 
 export default async function AdminOffersPage() {
   const cookieStore = await cookies();
@@ -14,43 +14,55 @@ export default async function AdminOffersPage() {
   }
 
   const offers = await prisma.offer.findMany({
-    orderBy: { created_at: 'desc' },
-    take: 200
+    orderBy: { created_at: "desc" },
+    take: 200,
   });
 
   return (
-    <main>
-      <section className="card" style={{ marginBottom: '1rem' }}>
-        <h1 style={{ marginTop: 0 }}>Admin Offers</h1>
-        <p className="meta" style={{ marginBottom: 0 }}>
-          Showing {offers.length} most recent offer{offers.length === 1 ? '' : 's'}.
+    <main className="max-w-6xl mx-auto px-6 space-y-4">
+      <section className="p-8 border border-border rounded-lg bg-background hover:border-accent/50 transition-colors space-y-4">
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight">Admin Offers</h1>
+        <p className="text-lg text-secondary leading-relaxed">
+          Showing {offers.length} most recent offer{offers.length === 1 ? "" : "s"}.
         </p>
-        <div style={{ marginTop: '0.7rem' }}>
-          <LogoutButton />
-        </div>
+        <LogoutButton />
       </section>
 
-      <section className="card" style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <section className="p-8 border border-border rounded-lg bg-background hover:border-accent/50 transition-colors overflow-x-auto">
+        <table className="w-full border-collapse text-sm md:text-base">
           <thead>
-            <tr>
-              <th align="left">Date</th>
-              <th align="left">Startup</th>
-              <th align="left">Buyer</th>
-              <th align="left">Email</th>
-              <th align="right">Amount</th>
-              <th align="left">Message</th>
+            <tr className="text-secondary">
+              <th align="left" className="pb-3 pr-4">
+                Date
+              </th>
+              <th align="left" className="pb-3 pr-4">
+                Startup
+              </th>
+              <th align="left" className="pb-3 pr-4">
+                Buyer
+              </th>
+              <th align="left" className="pb-3 pr-4">
+                Email
+              </th>
+              <th align="right" className="pb-3 pr-4">
+                Amount
+              </th>
+              <th align="left" className="pb-3">
+                Message
+              </th>
             </tr>
           </thead>
           <tbody>
             {offers.map((offer) => (
-              <tr key={offer.id} style={{ borderTop: '1px solid #d2dce6' }}>
-                <td>{offer.created_at.toISOString()}</td>
-                <td>{offer.startup_id}</td>
-                <td>{offer.buyer_name}</td>
-                <td>{offer.buyer_email}</td>
-                <td align="right">${offer.offer_amount_usd.toLocaleString()}</td>
-                <td style={{ maxWidth: 420 }}>{offer.message}</td>
+              <tr key={offer.id} className="border-t border-border">
+                <td className="py-3 pr-4">{offer.created_at.toISOString()}</td>
+                <td className="py-3 pr-4">{offer.startup_id}</td>
+                <td className="py-3 pr-4">{offer.buyer_name}</td>
+                <td className="py-3 pr-4">{offer.buyer_email}</td>
+                <td align="right" className="py-3 pr-4">
+                  ${offer.offer_amount_usd.toLocaleString()}
+                </td>
+                <td className="py-3 max-w-[420px]">{offer.message}</td>
               </tr>
             ))}
           </tbody>

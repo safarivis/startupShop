@@ -1,4 +1,18 @@
 listings:
+  - startup_id: hotel-site
+    path: listings/hotel-site.yaml
+  - startup_id: linkedin
+    path: listings/linkedin.yaml
+  - startup_id: localagenthub
+    path: listings/localagenthub.yaml
+  - startup_id: malawi
+    path: listings/malawi.yaml
+  - startup_id: staal
+    path: listings/staal.yaml
+  - startup_id: testproject
+    path: listings/testproject.yaml
+  - startup_id: truster
+    path: listings/truster.yaml
   - startup_id: pixelpilot-ai
     path: listings/pixelpilot-ai.yaml
   - startup_id: shelfsense

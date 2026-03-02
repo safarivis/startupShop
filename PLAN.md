@@ -57,3 +57,10 @@
 - [x] Cross-PR cleanup and documentation sync
 - [x] Flaky-test/CI stabilization (`.next` type artifact mitigation + single-install CI)
 - [x] Security baseline pass (headers + admin secret readiness checks)
+
+## v0.2.2 UI Theming (LewkAI Design System)
+
+- [x] Apply LewkAI global styles in `apps/web/app/globals.css` (Tailwind v4 + CSS tokens)
+- [x] Apply LewkAI layout in `apps/web/app/layout.tsx` (Outfit + Space Grotesk + fixed nav shell)
+- [x] Restyle catalog/detail/offer/admin routes with design-system utility classes
+- [x] Add Tailwind v4 PostCSS integration (`apps/web/postcss.config.js`)
