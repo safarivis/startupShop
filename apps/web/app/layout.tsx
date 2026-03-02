@@ -34,7 +34,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             >
               startupShop
             </Link>
-            <p className="text-sm text-secondary">MVP marketplace for startup acquisitions</p>
+            <nav className="flex items-center gap-4 text-sm text-secondary">
+              <Link href="/" className="hover:text-foreground transition-colors">
+                Portfolio
+              </Link>
+              <Link href="/invest" className="hover:text-foreground transition-colors">
+                Invest
+              </Link>
+            </nav>
           </div>
         </header>
         <div className="pt-24 pb-12">{children}</div>

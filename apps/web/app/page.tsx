@@ -39,10 +39,10 @@ export default async function HomePage({ searchParams }: HomeProps) {
   const sort: SortOption = isSort(params.sort) ? params.sort : "score";
   const query = params.q?.trim() ?? "";
 
-  const all = getStartups();
+  const all = getStartups({ bucket: "current" });
   const categories = Array.from(new Set(all.map((entry) => entry.identity.category))).sort();
 
-  let startups = getStartups({ category, stage, sort });
+  let startups = getStartups({ category, stage, bucket: "current", sort });
   if (query.length > 0) {
     startups = startups.filter((entry) => matchesSearch(entry, query));
   }
@@ -50,9 +50,9 @@ export default async function HomePage({ searchParams }: HomeProps) {
   return (
     <main className="max-w-6xl mx-auto px-6 space-y-8">
       <section className="space-y-4">
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight">Catalog</h1>
+        <h1 className="text-5xl md:text-7xl font-bold tracking-tight">Portfolio Dashboard</h1>
         <p className="text-lg text-secondary leading-relaxed">
-          Browse curated startup listings, compare fundamentals, and move directly to offer submission.
+          Internal view of all tracked projects across current and future buckets.
         </p>
       </section>
 

@@ -1,4 +1,6 @@
 startup_id: legalleaf
+bucket: future
+visibility: internal
 identity:
   name: LegalLeaf
   category: Legal Ops SaaS

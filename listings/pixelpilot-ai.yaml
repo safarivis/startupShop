@@ -1,4 +1,6 @@
 startup_id: pixelpilot-ai
+bucket: future
+visibility: internal
 identity:
   name: PixelPilot AI
   category: AI Design Tools

@@ -1,7 +1,11 @@
 export type StartupStage = 'idea' | 'mvp' | 'early-revenue' | 'growth' | 'mature';
+export type PortfolioBucket = 'current' | 'future' | 'archived';
+export type ListingVisibility = 'internal' | 'investor';
 
 export interface StartupListing {
   startup_id: string;
+  bucket: PortfolioBucket;
+  visibility: ListingVisibility;
   identity: {
     name: string;
     category: string;
