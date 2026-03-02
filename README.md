@@ -121,3 +121,9 @@ Snapshot-related env vars:
 
 - `METRICS_SYNC_TOKEN` - auth token for internal sync endpoint
 - `METRICS_STALE_AFTER_MS` - threshold for stale indicator in UI/API (default `1800000`)
+
+## Operations Notes
+
+- Status notes: `docs/ops/status-notes.md`
+- KPI tracking: `docs/ops/metrics.md`
+- Decision log: `docs/ops/decisions.md`
