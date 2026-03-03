@@ -29,3 +29,42 @@ Dry run:
 ```bash
 ./scripts/deploy-startupshop.sh --dry-run
 ```
+
+## Daily automation (laptop cron)
+
+Configured on Louis laptop (`crontab -l`):
+
+```bash
+0 13 * * * flock -n /tmp/startupshop-deploy.lock /home/louisdup/lewkai/scripts/run-startupshop-cron.sh
+```
+
+### What runs at 13:00 daily
+
+1. `scripts/deploy-startupshop.sh`
+   - syncs local startupShop source to VPS `/opt/startupshop`
+   - validates listings
+   - builds app
+   - restarts PM2 app `startupshop`
+   - checks health endpoint
+2. `scripts/send-startupshop-report.sh`
+   - sends success/failure email report via Resend
+
+### Logging + reporting
+
+- Cron/deploy log:
+  - `/home/louisdup/lewkai/logs/startupshop-cron.log`
+- Resend API response (last send):
+  - `/tmp/startupshop-resend-last.json`
+- Report recipient:
+  - `louisrdup@gmail.com`
+- Report sender:
+  - `startupShopAgent@lewkai.com`
+
+### Secrets source (local only)
+
+- `~/.config/lewkai/secrets/vps.env`
+- Required keys include:
+  - VPS SSH/deploy values
+  - `RESEND_API_KEY`
+  - `REPORT_FROM_EMAIL`
+  - `REPORT_TO_EMAIL`

@@ -2,10 +2,10 @@ startup_id: hotel-site
 bucket: current
 visibility: internal
 identity:
-  name: hotel-site
+  name: stayAgent
   category: Internal Project
   summary: Active LewkAI project tracked in the internal portfolio dashboard.
-  website: https://example.com/hotel-site
+  website: http://stayagent.online
 status:
   stage: mvp
   listed: false
